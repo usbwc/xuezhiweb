@@ -1,0 +1,10 @@
+.DS_Store
+.DS_Store?
+*.swp
+/.idea
+/uploads
+*/logs/log-*.php
+!*/logs/index.html
+*/cache/*
+!*/cache/index.html
+!*/cache/.htaccess

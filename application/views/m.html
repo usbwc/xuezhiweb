@@ -1,0 +1,46 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>俩逗 - 移动首页</title>
+    <link rel="shortcut icon" href="http://182.92.101.89/m/120.png" />
+    <link rel="stylesheet" href="/m/css.css" />
+    <meta name="viewport" content="initial-scale=1, width=device-width, maximum-scale=1, user-scalable=no">
+</head>
+
+<body>
+<script>
+    function is_weixin(){
+        var ua = navigator.userAgent.toLowerCase();
+        if(ua.match(/MicroMessenger/i) == "micromessenger") {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    if(is_weixin()){
+        alert('微信不允许下载，请点击微信右上角的菜单选择在浏览器中打开');
+    }
+</script>
+<div class="wrap">
+    <div class="header">
+        <img src="/m/120.png" class="f-left"/>
+        <div class="header-title f-left">
+            <p class="title">俩逗</p>
+            <P class="subtit">你身边的线下活动中心</P>
+        </div>
+    </div>
+    <div class="pic">
+        <img src="/m/p1.png" />
+        <p class="copy">@邯郸市众邦传媒</p>
+    </div>
+    <div class="download">
+        <!--<img src="/m/4411/images/download.png" alt="" />-->
+        <!--<a href="http://a.app.qq.com/o/simple.jsp?pkgname=com.weiju&g_f=991653">下载应用</a>-->
+        <a href="http://182.92.101.89/m/liadou.apk" id="weixlnk"><img src="/m/android.png" width="237" /></a>
+        <a href="https://itunes.apple.com/us/app/lia-dou/id972429961?l=zh&ls=1&mt=8"><img src="/m/iphone.png" width="237"></a><br />
+    </div>
+</div>
+</body>
+</html>

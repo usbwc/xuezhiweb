@@ -1,0 +1,442 @@
+<style>
+    .field{
+        padding: 0 10px 0 10px;
+    }
+    .label {
+        text-align: center;
+    }
+</style>
+<br>
+<form method="post">
+    <div class="line">
+        <div class="form-group x2">
+            <div class="label"><label for="hospital_id">医院</label></div>
+            <div class="field">
+                <div class="field">
+                    <select class="input" id="hospital_id">
+                        <?php foreach ($hospital_array as $item):?>
+                        <?php if ($item['id'] === $carer['hospital_id']): ?>
+                        <option selected="selected" value="<?php echo $item['id'];?>"><?php echo $item['hospital_name'];?></option>
+                        <?php else: ?>
+                        <option value="<?php echo $item['id'];?>"><?php echo $item['hospital_name'];?></option>
+                        <?php endif; ?>
+                        <?php endforeach;?>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="form-group x2">
+            <div class="label"><label for="name">姓名</label></div>
+            <div class="field">
+                <input value="<?=$carer['name']?>" type="text" class="input" id="name" size="50" placeholder="你的真实姓名" />
+            </div>
+        </div>
+        <div class="form-group x2">
+            <div class="label"><label for="age">年龄</label></div>
+            <div class="field">
+                <input value="<?=$carer['age']?>" type="text" class="input" id="age"  size="50" placeholder="年龄" />
+            </div>
+        </div>
+        <div class="form-group x2">
+            <div class="label"><label >性别</label></div>
+            <div class="field">
+                <div class="button-group radio">
+                    <label id="sirLbl"
+                    <?php if (1 == $carer['gender']): ?>
+                    class="button active">
+                    <?php else: ?>
+                    class="button">
+                    <?php endif; ?>
+                    <input name="gender" id="sir" checked="checked" type="radio"><span class="icon icon-male"></span> 先生</label>
+
+                    <label id="missLbl"
+                    <?php if (2 == $carer['gender']): ?>
+                    class="button active">
+                    <?php else: ?>
+                    class="button">
+                    <?php endif; ?>
+                    <input name="gender" id="miss" type="radio"><span class="icon icon-female"></span> 女士</label>
+                </div>
+            </div>
+        </div>
+        <div class="form-group x2">
+            <div class="label"><label for="hometown">籍贯</label></div>
+            <div class="field">
+                <input value="<?=$carer['hometown']?>" type="text" class="input" id="hometown"  size="50" placeholder="籍贯" />
+            </div>
+        </div>
+
+        <div class="form-group x2">
+            <div class="label"><label for="star_level">服务星级</label></div>
+            <div class="field">
+                <select class="input" id="star_level">
+                    <?php foreach ($star_level_array as $k=>$v):?>
+                    <?php if ($k == $carer['star_level']): ?>
+                    <option selected="selected" value="<?=$k;?>"><?php echo $v;?></option>
+                    <?php else:?>
+                    <option value="<?=$k;?>"><?php echo $v;?></option>
+                    <?php endif;?>
+                    <?php endforeach;?>
+                </select>
+            </div>
+        </div>
+        <div class="form-group x2">
+            <div class="label"><label for="nursing_exp">经验</label></div>
+            <div class="field">
+                <input value="<?=$carer['nursing_exp']?>" type="text" class="input" id="nursing_exp" size="50" placeholder="经验" />
+            </div>
+        </div>
+        <div class="form-group x2">
+            <div class="label"><label for="nursing_level">护理等级</label></div>
+            <div class="field">
+                <select class="input" id="nursing_level">
+                    <?php foreach ($nurse_service_level_array as $k=>$v):?>
+                    <?php if ($k == $carer['nursing_level']): ?>
+                    <option selected="selected" value="<?=$k;?>"><?=$v;?></option>
+                    <?php else:?>
+                    <option value="<?=$k;?>"><?=$v;?></option>
+                    <?php endif;?>
+                    <?php endforeach;?>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group x2">
+            <div class="label"><label for="nurse_service_status">状态</label></div>
+            <div class="field">
+                <select class="input" id="nurse_service_status">
+                    <?php foreach ($nurse_service_status_array as $k=>$v):?>
+                    <?php if ($k == $carer['nurse_service_status']): ?>
+                    <option selected="selected" value="<?=$k;?>"><?php echo $v;?></option>
+                    <?php else:?>
+                    <option value="<?=$k;?>"><?=$v;?></option>
+                    <?php endif;?>
+                    <?php endforeach;?>
+                </select>
+            </div>
+        </div>
+        <div class="form-group x2">
+            <div class="label"><label for="job_num">工号</label></div>
+            <div class="field">
+                <input value="<?=$carer['job_num'];?>" type="text" class="input" id="job_num" size="50" placeholder="工号" />
+            </div>
+        </div>
+        <div class="form-group x2">
+            <div class="label"><label for="language_level">语言</label></div>
+            <div class="field">
+                <input value="<?=$carer['language_level'];?>" type="text" class="input" id="language_level" size="50" placeholder="语言" />
+            </div>
+        </div>
+        <div class="form-group x2">
+            <div class="label"><label for="education">教育</label></div>
+            <div class="field">
+                <input value="<?=$carer['education'];?>" type="text" class="input" id="education" size="50" placeholder="教育" />
+            </div>
+        </div>
+        <div class="form-group x2">
+            <div class="label"><label for="nation">民族</label></div>
+            <div class="field">
+                <input value="<?=$carer['nation'];?>" type="text" class="input" id="nation" size="50" placeholder="民族" />
+            </div>
+        </div>
+
+        <div class="form-group x2">
+            <div class="label"><label for="certificate">证书</label></div>
+            <div class="field">
+                <input value="<?=$carer['certificate'];?>" type="text" class="input" id="certificate" size="50" placeholder="证书" />
+            </div>
+        </div>
+        <div class="form-group x2">
+            <div class="label"><label for="file_upload">头像</label></div>
+            <div class="field">
+                <input type="file" name="file_upload" id="file_upload" />
+                <!--<a class="button input-file" href="javascript:void(0);">+ 浏览文件</a>-->
+            </div>
+        </div>
+        <div class="form-group x2">
+            <div><img class="img-responsive" id="avatar" src="<?=$carer['avatar'];?>"/></div>
+        </div>
+        <div class="form-group x12">
+        </div>
+        <br>
+        <div class="form-group x6">
+            <div class="label"><label >擅长科室</label></div>
+            <div class="field" id="depart_div">
+                <?php foreach ($department_array as $item):?>
+
+                <label>&nbsp&nbsp <input
+                    <?php if (in_array($item['id'],$carer_department_array)):?>
+                    checked = "checked";
+                    <?php endif;?>
+                        type="checkbox" did="<?=$item['id'];?>"> <?php echo $item['department_name'];?></label>
+
+                <?php endforeach;?>
+
+            </div>
+        </div>
+
+
+        <div class="form-group x6">
+            <div class="label"><label>价格</label></div>
+            <div class="text-center x4">自理</div>
+            <div class="text-center x4">半自理</div>
+            <div class="text-center x4">不能自理</div>
+            <div class="field x4">
+                <div class="input-group"><span class="addon">¥</span>
+                    <input value="<?=$carer['service_charge_per_day_care'];?>" class="input" type="number" id="service_charge_per_day_care"  size="50" placeholder="金额" />
+                    <span class="addon">元/白天</span></div>
+            </div>
+            <div class="field x4">
+                <div class="input-group"><span class="addon">¥</span>
+                    <input value="<?=$carer['service_charge_per_day_half_care'];?>" class="input" type="number" id="service_charge_per_day_half_care"  size="50" placeholder="金额" />
+                    <span class="addon">元/白天</span></div>
+            </div>
+            <div class="field x4">
+                <div class="input-group"><span class="addon">¥</span>
+                    <input value="<?=$carer['service_charge_per_day_cannt_care'];?>" class="input" type="number" id="service_charge_per_day_cannt_care"  size="50" placeholder="金额" />
+                    <span class="addon">元/白天</span></div>
+            </div>
+
+            <div class="field x4">
+                <div class="input-group"><span class="addon">¥</span>
+                    <input value="<?=$carer['service_charge_per_night_care'];?>" class="input" type="number" id="service_charge_per_night_care"  size="50" placeholder="金额" />
+                    <span class="addon">元/晚上</span></div>
+            </div>
+            <div class="field x4">
+                <div class="input-group"><span class="addon">¥</span>
+                    <input value="<?=$carer['service_charge_per_night_half_care'];?>" class="input" type="number" id="service_charge_per_night_half_care"  size="50" placeholder="金额" />
+                    <span class="addon">元/晚上</span></div>
+            </div>
+            <div class="field x4">
+                <div class="input-group"><span class="addon">¥</span>
+                    <input value="<?=$carer['service_charge_per_night_cannt_care'];?>" class="input" type="number" id="service_charge_per_night_cannt_care"  size="50" placeholder="金额" />
+                    <span class="addon">元/晚上</span></div>
+            </div>
+
+            <div class="field x4">
+                <div class="input-group"><span class="addon">¥</span>
+                    <input value="<?=$carer['service_charge_per_all_care'];?>" class="input" type="number" id="service_charge_per_all_care"  size="50" placeholder="金额" />
+                    <span class="addon">元/全天</span></div>
+            </div>
+            <div class="field x4">
+                <div class="input-group"><span class="addon">¥</span>
+                    <input value="<?=$carer['service_charge_per_all_half_care'];?>" class="input" type="number" id="service_charge_per_all_half_care"  size="50" placeholder="金额" />
+                    <span class="addon">元/全天</span></div>
+            </div>
+            <div class="field x4">
+                <div class="input-group"><span class="addon">¥</span>
+                    <input value="<?=$carer['service_charge_per_all_cannt_care'];?>" class="input" type="number" id="service_charge_per_all_cannt_care"  size="50" placeholder="金额" />
+                    <span class="addon">元/全天</span></div>
+            </div>
+
+        </div>
+
+        <div class="x12">&nbsp;</div>
+        <div class="form-group x6">
+            <div class="label"><label for="intro">个人介绍</label></div>
+            <div class="field">
+                <textarea draggable="false" class="input" rows="5" cols="50" id="intro"  placeholder="个人介绍" ><?=$carer['intro'];?></textarea>
+            </div>
+        </div>
+        <div class="form-group x6">
+            <div class="label"><label for="service_content">服务内容</label></div>
+            <div class="field">
+                <textarea draggable="false" class="input" rows="5" cols="50" id="service_content" placeholder="服务内容" ><?=$carer['service_content'];?></textarea>
+            </div>
+        </div>
+
+    </div>
+    </form>
+
+    <div class="form-button"><button class="button" id="addBtn">修改</button></div>
+
+
+
+
+<link rel="stylesheet" href="/uploadify/uploadify.css" type="text/css">
+<script src="/uploadify/jquery.uploadify.min.js"></script>
+<script type="text/javascript">
+    String.prototype.trim=function(){
+        return this.replace(/(^\s*)|(\s*$)/g, "");
+    };
+    String.prototype.isNull=function(){
+        return this.length==0 || this == null;
+    };
+    String.prototype.isNum=function(){
+        var temp=/^\d+?$/;
+        return temp.test(this);
+    };
+    $(function() {
+
+        $("#file_upload").uploadify({
+            buttonText    : '选择头像',
+            height        : 30,
+            swf           : '/uploadify/uploadify.swf',
+            uploader      : '/upload',
+            width         : 120,
+            'onUploadSuccess' : function(file, data, response) {
+                //alert('The file was saved to: ' + file);
+                $('#avatar').attr('src',data);
+            }
+        });
+        $("#addBtn").click(function(){
+
+            var name = $("#name").val();
+            name =name.trim();
+            if(name.isNull()){
+                alert('姓名不能为空');
+                return;
+            }
+            var age = $("#age").val();
+            age =age.trim();
+            if(!age.isNum()){
+                alert('年龄必须为数字');
+                return;
+            }
+            if(age<18 || age>60){
+                alert('年龄必须为18-60');
+                return;
+            }
+            var hometown = $("#hometown").val();
+            hometown = hometown.trim();
+            if(hometown.isNull()){
+                alert('籍贯不能为空');
+                return;
+            }
+            var nursing_exp = $("#nursing_exp").val();
+            nursing_exp = nursing_exp.trim();
+            if(nursing_exp.isNull()){
+                alert('护理经验不能为空');
+                return;
+            }
+            var service_charge_per_all_care = $("#service_charge_per_all_care").val();
+            service_charge_per_all_care =service_charge_per_all_care.trim();
+            var service_charge_per_all_half_care = $("#service_charge_per_all_half_care").val();
+            service_charge_per_all_half_care =service_charge_per_all_half_care.trim();
+            var service_charge_per_all_cannt_care = $("#service_charge_per_all_cannt_care").val();
+            service_charge_per_all_cannt_care =service_charge_per_all_cannt_care.trim();
+
+            var service_charge_per_day_care = $("#service_charge_per_day_care").val();
+            service_charge_per_day_care =service_charge_per_day_care.trim();
+            var service_charge_per_day_half_care = $("#service_charge_per_day_half_care").val();
+            service_charge_per_day_half_care =service_charge_per_day_half_care.trim();
+            var service_charge_per_day_cannt_care = $("#service_charge_per_day_cannt_care").val();
+            service_charge_per_day_cannt_care =service_charge_per_day_cannt_care.trim();
+
+            var service_charge_per_night_care = $("#service_charge_per_night_care").val();
+            service_charge_per_night_care =service_charge_per_night_care.trim();
+            var service_charge_per_night_half_care = $("#service_charge_per_night_half_care").val();
+            service_charge_per_night_half_care =service_charge_per_night_half_care.trim();
+            var service_charge_per_night_cannt_care = $("#service_charge_per_night_cannt_care").val();
+            service_charge_per_night_cannt_care =service_charge_per_night_cannt_care.trim();
+
+            if(!service_charge_per_all_care.isNum()
+                    ||!service_charge_per_all_half_care.isNum()
+                    ||!service_charge_per_all_cannt_care.isNum()
+                    ||!service_charge_per_day_care.isNum()
+                    ||!service_charge_per_day_half_care.isNum()
+                    ||!service_charge_per_day_cannt_care.isNum()
+                    ||!service_charge_per_night_care.isNum()
+                    ||!service_charge_per_night_half_care.isNum()
+                    ||!service_charge_per_night_cannt_care.isNum()
+            ){
+                alert('价格必须为数字');
+                return;
+            }
+
+
+            if(!service_charge_per_all_care.isNum()){
+                alert('年龄必须为数字');
+                return;
+            }
+
+            var job_num = $("#job_num").val();
+            job_num = job_num.trim();
+            if(job_num.isNull()){
+                alert('工号不能为空');
+                return;
+            }
+            var language_level = $("#language_level").val();
+            language_level = language_level.trim();
+            if(language_level.isNull()){
+                alert('语言不能为空');
+                return;
+            }
+            var education = $("#education").val();
+            education = education.trim();
+            if(education.isNull()){
+                alert('教育程度不能为空');
+                return;
+            }
+            var nation = $("#nation").val();
+            nation = nation.trim();
+            if(nation.isNull()){
+                alert('民族不能为空');
+                return;
+            }
+            var departments = '';
+            $('#depart_div input:checkbox:checked').each(function(){
+                departments = departments + $(this).attr('did') + ',';
+            });
+            if(departments == ''){
+                alert('至少选择一个擅长科室');
+                return;
+            }
+            var certificate = $("#certificate").val();
+            certificate = certificate.trim();
+            if(certificate.isNull()){
+                alert('证书不能为空');
+                return;
+            }
+            var intro = $("#intro").val();
+            intro = intro.trim();
+            if(intro.isNull()){
+                alert('个人介绍不能为空');
+                return;
+            }
+            var service_content = $("#service_content").val();
+            service_content = service_content.trim();
+            if(service_content.isNull()){
+                alert('服务内容不能为空');
+                return;
+            }
+            var hospital_id = $('#hospital_id').val();
+            var star_level = $('#star_level').val();
+            var nursing_level = $('#nursing_level').val();
+            var nurse_service_status = $('#nurse_service_status').val();
+            var avatar = $('#avatar').attr("src");
+
+            var gender = 1;
+            if($('#missLbl').hasClass('active')){
+                gender = 2;
+            }
+            var id = '<?=$carer['id']?>';
+            var parmas = {id:id,name:name,hospital_id:hospital_id,age:age,gender:gender,
+                          hometown:hometown,star_level:star_level,nursing_exp:nursing_exp,
+                nursing_level:nursing_level,
+                nurse_service_status:nurse_service_status,job_num:job_num,language_level:language_level,
+                education:education,nation:nation,departments:departments,certificate:certificate,
+                intro:intro,service_content:service_content,avatar:avatar,
+                service_charge_per_all_care:service_charge_per_all_care,
+                service_charge_per_all_half_care:service_charge_per_all_half_care,
+                service_charge_per_all_cannt_care:service_charge_per_all_cannt_care,
+                service_charge_per_day_care:service_charge_per_day_care,
+                service_charge_per_day_half_care:service_charge_per_day_half_care,
+                service_charge_per_day_cannt_care:service_charge_per_day_cannt_care,
+                service_charge_per_night_care:service_charge_per_night_care,
+                service_charge_per_night_half_care:service_charge_per_night_half_care,
+                service_charge_per_night_cannt_care:service_charge_per_night_cannt_care
+            };
+            console.log(parmas);
+            $.post('/admin/carer/editAction',parmas,function(json){
+                if(json.status == 0){
+                    alert('修改成功');
+                }
+            },'JSON').error(function(){
+                alert('修改失败');
+            });
+        });
+
+
+    });
+</script>

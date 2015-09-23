@@ -1,0 +1,216 @@
+<style>
+    td.details-control {
+        background: url('/datatables/media/images/details_open.png') no-repeat center center;
+        cursor: pointer;
+    }
+    tr.shown td.details-control {
+        background: url('/datatables/media/images/details_close.png') no-repeat center center;
+    }
+    .details p {
+        margin-bottom:0px;
+    }
+</style>
+
+<script src="/datatables/media/js/jquery.dataTables.min.js"></script>
+<link rel="stylesheet" href="/datatables/media/css/jquery.dataTables.min.css" type="text/css">
+
+    <div class="x12" >
+        <table id="table" class="table table-hover table-responsive table-bordered">
+            <thead>
+            <tr>
+                <th></th>
+                <th>订单号</th>
+                <th>时间</th>
+                <th>订单所留电话</th>
+                <th>医院</th>
+                <th>订单状态</th>
+            </tr>
+            </thead>
+            <tfoot>
+            <tr>
+                <th></th>
+                <th>订单号</th>
+                <th>时间</th>
+                <th>订单所留电话</th>
+                <th>医院</th>
+                <th>订单状态</th>
+            </tr>
+            </tfoot>
+        </table>
+
+
+
+    </div>
+
+
+    <script>
+        var statusArrayStr = '<?php echo $status_array?>';
+        var statusArray = JSON.parse(statusArrayStr);
+        var orderMobileIndex = 3;
+        var hospitalNameIndex = 4;
+        var statusIndex = 5;
+        $(function(){
+            var dt = $('#table').dataTable({
+                "processing": true,
+                "serverSide": true,
+                "ajax": "/admin/db/getOrder",
+                "oLanguage": {
+                    "sLengthMenu": "每页显示 _MENU_ 条记录",
+                    "sInfo": "从 _START_ 到 _END_ /共 _TOTAL_ 条数据",
+                    "sInfoEmpty": "没有数据",
+                    "sInfoFiltered": "(从 _MAX_ 条数据中检索)",
+                    "sZeroRecords": "没有检索到数据",
+                    "sSearch": "名称:",
+                    "oPaginate": {
+                        "sFirst": "首页",
+                        "sPrevious": "前一页",
+                        "sNext": "后一页",
+                        "sLast": "尾页"
+                    },"sProcessing":"查找中..."
+                },
+                "columns": [
+                    {
+                        "class":          "details-control",
+                        "orderTable":      false,
+                        "data":           null,
+                        "defaultContent": ""
+                    },
+                    { "data": "show_id" },
+                    { "data": "order_time" },
+                    { "data": "mobile1" },
+                    { "data": "hospital_name" },
+                    { "data": "status" }
+                ],
+                "order": [[1, 'desc']],
+                "initComplete": function () {
+                    AfterInit();
+                    var api = this.api();
+                    api.columns().indexes().flatten().each( function ( i ) {
+                        if(i != hospitalNameIndex && i!= statusIndex){
+                            return;
+                        }
+                        var column = api.column( i );
+                        var select = $('<select class="input"><option value="">全部</option></select>')
+                                .appendTo( $(column.footer()).empty() )
+                                .on( 'change', function () {
+                                    var val = $.fn.dataTable.util.escapeRegex(
+                                            $(this).val()
+                                    );
+                                    column
+                                            .search( val ? val: '', true, false )
+                                            .draw();
+                                } );
+                        column.data().unique().sort().each( function ( d, j ) {
+                            if(i == hospitalNameIndex){
+                                select.append( '<option value="'+d+'">'+d+'</option>' )
+                            } else  if(i == statusIndex){
+                                var v = '';
+                                for(var k in statusArray) {
+                                    if(d == k){
+                                        v = statusArray[k];
+                                        break;
+                                    }
+                                }
+                                select.append( '<option value="'+d+'">'+v+'</option>' )
+                            }
+
+                        } );
+                    } );
+                },
+                "columnDefs": [
+                    {
+                        "render": function (data, type, row) {
+                            var v = '';
+                            for(var k in statusArray) {
+                                if(data == k){
+                                    v = statusArray[k];
+                                    break;
+                                }
+                            }
+                            if(data==1){
+                                return '<span class="badge bg-main">'+v+'</span>'
+                            } else if (data == 2){
+                                return '<span class="badge bg-sub">'+v+'</span>'
+                            } else if (data == 3){
+                                return '<span class="badge bg-mix">'+v+'</span>'
+                            } else if (data == 4){
+                                return '<span class="badge bg-gray">'+v+'</span>'
+                            } else if (data == 5){
+                                return '<span class="badge bg-black">'+v+'</span>'
+                            } else {
+                                return '<span class="badge bg-dot">'+v+'</span>'
+                            }
+                        },
+                        "targets": statusIndex
+                    }]
+            });
+        });
+        var detailRows = [];
+        function AfterInit(){
+            var dt = $('#table').DataTable();
+            $('#table tbody').on( 'click', 'tr td.details-control', function () {
+                var tr = $(this).closest('tr');
+                var row = dt.row( tr );
+                var idx = $.inArray( tr.attr('id'), detailRows );
+
+                if ( row.child.isShown() ) {
+                    tr.removeClass( 'details' );
+                    row.child.hide();
+
+                    // Remove from the 'open' array
+                    detailRows.splice( idx, 1 );
+                }
+                else {
+                    tr.addClass( 'details' );
+                    row.child( format( row.data() ) ).show();
+
+                    // Add to the 'open' array
+                    if ( idx === -1 ) {
+                        detailRows.push( tr.attr('id') );
+                    }
+                }
+            } );
+
+            // On each draw, loop over the `detailRows` array and show any child rows
+            dt.on( 'draw', function () {
+                $.each( detailRows, function ( i, id ) {
+                    $('#'+id+' td.details-control').trigger( 'click' );
+                } );
+            } );
+        }
+        function format ( d ) {
+            // `d` is the original data object for the row
+            var html = '';
+            html +=  '<div class="line details">';
+            html += '<div class="x1"> '+d.cared_gender+'</div> ';
+            if(d.cid == 0){
+                html += '<div class="x1"><button data-toggle="click" data-target="#chooseDialog" data-mask="1" data-width="50%" onclick="chooseCarer(this)">选择护理员</button></div> ';
+            }
+            html += '</div>';
+            return html;
+        }
+        function chooseCarer(btn){
+            $showdialogs($(btn));
+        }
+    </script>
+
+
+<div id="chooseDialog">
+    <div class="dialog">
+        <div class="dialog-head">
+            <span class="close rotate-hover"></span>
+            <strong>修改医院</strong>
+        </div>
+        <div class="dialog-body">
+            <input class="input updateHospital" size="50" value="" />
+            <form>
+                <label><input type="radio" name="carerRadioBtn"> 拼图框架</label>
+                <label><input type="radio" name="carerRadioBtn"> 拼图框架</label>
+            </form>
+        </div>
+        <div class="dialog-foot">
+            <button class="button dialog-close">取消</button>
+            <button class="button bg-green confirm-update">确认</button>
+        </div>
+    </div>
+</div>

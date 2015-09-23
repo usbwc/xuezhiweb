@@ -1,0 +1,168 @@
+<style>
+    td.details-control {
+        background: url('/datatables/media/images/details_open.png') no-repeat center center;
+        cursor: pointer;
+    }
+    tr.shown td.details-control {
+        background: url('/datatables/media/images/details_close.png') no-repeat center center;
+    }
+    .details p {
+        margin-bottom:0px;
+    }
+</style>
+
+<script src="/datatables/media/js/jquery.dataTables.min.js"></script>
+<link rel="stylesheet" href="/datatables/media/css/jquery.dataTables.min.css" type="text/css">
+
+    <div class="x12" >
+        <table id="table" class="table table-hover table-responsive table-bordered">
+            <thead>
+            <tr>
+                <th></th>
+                <th>姓名</th>
+                <th>年龄</th>
+                <th>服务状态</th>
+                <th>医院</th>
+            </tr>
+            </thead>
+        </table>
+
+
+
+    </div>
+
+
+    <script>
+        $(function(){
+            var dt = $('#table').dataTable({
+                "processing": true,
+                "serverSide": true,
+                "ajax": "/admin/db/getCarer",
+                "oLanguage": {
+                    "sLengthMenu": "每页显示 _MENU_ 条记录",
+                    "sInfo": "从 _START_ 到 _END_ /共 _TOTAL_ 条数据",
+                    "sInfoEmpty": "没有数据",
+                    "sInfoFiltered": "(从 _MAX_ 条数据中检索)",
+                    "sZeroRecords": "没有检索到数据",
+                    "sSearch": "名称:",
+                    "oPaginate": {
+                        "sFirst": "首页",
+                        "sPrevious": "前一页",
+                        "sNext": "后一页",
+                        "sLast": "尾页"
+                    },"sProcessing":"查找中..."
+                },
+                "columns": [
+                    {
+                        "class":          "details-control",
+                        "orderable":      false,
+                        "data":           null,
+                        "defaultContent": ""
+                    },
+                    { "data": "name" },
+                    { "data": "age" },
+                    { "data": "nurse_service_status" },
+                    { "data": "hospital_name" }
+                ],
+                "order": [[1, 'asc']],
+                "initComplete": function () {
+                    AfterInit();
+                },
+                "columnDefs": [
+                    {
+                        "render": function (data, type, row) {
+                            if(data==1){
+                                return '<span class="badge bg-sub">待命</span>'
+                            } else if (data == 2){
+                                return '<span class="badge bg-dot">服务中</span>'
+                            }
+                        },
+                        "targets": 3
+
+                    }]
+
+            });
+            // Array to track the ids of the details displayed rows
+        });
+
+        var detailRows = [];
+        function AfterInit(){
+            var dt = $('#table').DataTable();
+            $('#table tbody').on( 'click', 'tr td.details-control', function () {
+                var tr = $(this).closest('tr');
+                var row = dt.row( tr );
+                var idx = $.inArray( tr.attr('id'), detailRows );
+
+                if ( row.child.isShown() ) {
+                    tr.removeClass( 'details' );
+                    row.child.hide();
+
+                    // Remove from the 'open' array
+                    detailRows.splice( idx, 1 );
+                }
+                else {
+                    tr.addClass( 'details' );
+                    row.child( format( row.data() ) ).show();
+
+                    // Add to the 'open' array
+                    if ( idx === -1 ) {
+                        detailRows.push( tr.attr('id') );
+                    }
+                }
+            } );
+
+            // On each draw, loop over the `detailRows` array and show any child rows
+            dt.on( 'draw', function () {
+                $.each( detailRows, function ( i, id ) {
+                    $('#'+id+' td.details-control').trigger( 'click' );
+                } );
+            } );
+        }
+        function format ( d ) {
+            // `d` is the original data object for the row
+            return '<div class="line details">' +
+                    '<div class="x1"> <div><img class="x12" src="'+ d.avatar+'"> </div>' +
+                    '<button onclick="edit(\''+ d.id+'\')">编辑</button> ' +
+                    '<button onclick="del(this)">删除</button> </div>' +
+                    '<div class="x11" style="padding-left: 10px">' +
+                    '<div class="x2"> <p>医院:'+ d.hospital_name +'</p> <p>性别:'+ d.gender +'</p> <p>年龄:'+ d.age +'</p> </div> ' +
+                    '<div class="x2"> <p>星级:'+ d.star_level +'</p> <p>籍贯:'+ d.hometown +'</p> <p>经验:'+ d.nursing_exp +'</p> </div> ' +
+                    '<div class="x2"> <p>护理界别:'+ d.nursing_level +'</p> ' +
+                    '<p>价格:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;白天 晚上 全天</p> ' +
+                    '<p>自理:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'+ d.service_charge_per_day_care+' '+ d.service_charge_per_night_care+' '+ d.service_charge_per_all_care+'</p> ' +
+                    '<p>半自理:&nbsp;&nbsp;&nbsp;'+ d.service_charge_per_day_half_care+' '+ d.service_charge_per_night_half_care+' '+ d.service_charge_per_all_half_care+'</p> ' +
+                    '<p>不能自理:'+ d.service_charge_per_day_cannt_care+' '+ d.service_charge_per_night_cannt_care+' '+ d.service_charge_per_all_cannt_care+'</p> ' +
+                    '<p>工号:'+ d.job_num +'</p> </div> ' +
+                    '<div class="x2"> <p>语言:'+ d.language_level +'</p> <p>教育:'+ d.education +'</p> <p>民族:'+ d.nation +'</p> </div> ' +
+                    '<div class="x2"> <p>擅长科室:'+ d.departments +'</p>'+
+                    '<div class="x11">个人简介: '+ d.intro +'</div> ' +
+                    '<div class="x11">服务内容服务内容: '+ d.service_content +'</div> ' +
+                    '</div> </div>';
+        }
+        function edit(id){
+            var cid = id.replace('row_','');
+            var a = $("<a href='/admin/carer/edit/"+cid+"' target='_blank'></a>").get(0);
+            var e = document.createEvent('MouseEvents');
+            e.initEvent('click', true, true);
+            a.dispatchEvent(e);
+        }
+        function del(btn){
+            var gnl=confirm("真的确定要删除吗?");
+            if (gnl==true){
+                var dt = $('#table').DataTable();
+                var tr = $(btn).closest('tr');
+
+                var row = dt.row( $(tr).prev() );
+                var data = row.data();
+                var id = data.id.replace('row_','');
+                $.post('/admin/carer/delAction',{id:id},function(){
+                    $(tr).prev().remove();
+                    $(tr).remove();
+
+                },'JSON').error(function(){
+                    alert('删除失败');
+                });
+            }
+
+        }
+    </script>

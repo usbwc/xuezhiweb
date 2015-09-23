@@ -1,0 +1,189 @@
+<style>
+    td.details-control {
+        background: url('/datatables/media/images/details_open.png') no-repeat center center;
+        cursor: pointer;
+    }
+    tr.shown td.details-control {
+        background: url('/datatables/media/images/details_close.png') no-repeat center center;
+    }
+    .details p {
+        margin-bottom:0px;
+    }
+</style>
+
+<script src="/datatables/media/js/jquery.dataTables.min.js"></script>
+<link rel="stylesheet" href="/datatables/media/css/jquery.dataTables.min.css" type="text/css">
+
+    <input type="hidden" id="operateHospital"/>
+
+    <div id="updateDialog">
+        <div class="dialog">
+            <div class="dialog-head">
+                <span class="close rotate-hover"></span>
+                <strong>修改医院</strong>
+            </div>
+            <div class="dialog-body">
+                <input class="input updateHospital" size="50" value="" />
+            </div>
+            <div class="dialog-foot">
+                <button class="button dialog-close">取消</button>
+                <button class="button bg-green confirm-update">确认</button>
+            </div>
+        </div>
+    </div>
+    <div id="deleteDialog">
+        <div class="dialog">
+            <div class="dialog-head">
+                <span class="close rotate-hover"></span>
+                <strong>删除医院</strong>
+            </div>
+            <div class="dialog-body">
+                确认要删除<<span class="delHospital"></span>>么?
+            </div>
+            <div class="dialog-foot">
+                <button class="button dialog-close">取消</button>
+                <button class="button bg-green confirm-del">确认</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="x12" >
+        <table id="table" class="table table-hover table-responsive table-bordered">
+            <thead>
+            <tr>
+                <th>编号</th>
+                <th>医院</th>
+            </tr>
+            </thead>
+        </table>
+
+    </div>
+
+    <br>
+    <div class="line">
+        <div class="x3">
+            <input class="input" type="text" id="newHospitalInput"/>
+        </div>
+        <div class="x1 x1-move">
+            <button class="button bg-main" id="addHospitalBtn">添加</button>
+        </div>
+    </div>
+
+    <script>
+        String.prototype.trim=function(){
+            return this.replace(/(^\s*)|(\s*$)/g, "");
+        };
+        function del(btn){
+            var id = $(btn).attr('id');
+            id = id.replace('del','');
+            $('#operateHospital').val(id);
+            var hospital = $(btn).parent().next().html();
+            $('.delHospital').html(hospital);
+            $showdialogs($(btn));
+            $('.confirm-del').click(function(){
+                $('.dialog-win').remove();
+                $('.dialog-mask').remove();
+                var id = $('#operateHospital').val();
+                $.post('/admin/hospital/delAction',{id:id},function(json){
+                    if(json.status == 0){
+                        $('#del'+id).parent().parent().remove();
+                    } else {
+                        alert("删除失败");
+                    }
+                },'JSON').error(function(){
+                    alert("删除失败");
+                });
+
+            });
+        }
+        function update(btn){
+            var id = $(btn).attr('id');
+            id = id.replace('update','');
+            $('#operateHospital').val(id);
+            $showdialogs($(btn));
+            var hospital = $(btn).parent().next().html();
+
+            var updateInput = $('.dialog-win').find('.updateHospital');
+            updateInput.val(hospital);
+
+            $('.confirm-update').click(function(){
+                var newHospital = updateInput.val().trim();
+
+                if(newHospital == hospital){
+                    alert('没有改变');
+                    return;
+                }
+                if(newHospital.length == 0 || newHospital== null){
+                    alert('不能为空');
+                    return;
+                }
+                var id = $('#operateHospital').val();
+                $.post('/admin/hospital/updateAction',{id:id,name:newHospital},function(json){
+                    if(json.status == 0){
+                        $('.dialog-win').remove();
+                        $('.dialog-mask').remove();
+                        $('#update'+id).parent().next().html(newHospital);
+                    } else {
+                        alert("修改失败");
+                    }
+                },'JSON').error(function(){
+                    alert("修改失败");
+                });
+            });
+        }
+        $(function(){
+            $('#addHospitalBtn').click(function(){
+                var newHospital = $('#newHospitalInput').val().trim();
+                if(newHospital.length<5){
+                    alert('医院名字太短');
+                }
+                $.post('/admin/hospital/addAction',{name:newHospital},function(json){
+                    if(json.status == 0){
+                        alert('添加成功,请刷新查看');
+                    } else {
+                        alert(json.msg);
+                    }
+                },'JSON').error(function(){
+                    alert("修改失败");
+                });
+            });
+
+
+            var dt = $('#table').dataTable({
+                "processing": true,
+                "serverSide": true,
+                "ajax": "/admin/db/getHospital",
+                "oLanguage": {
+                    "sLengthMenu": "每页显示 _MENU_ 条记录",
+                    "sInfo": "从 _START_ 到 _END_ /共 _TOTAL_ 条数据",
+                    "sInfoEmpty": "没有数据",
+                    "sInfoFiltered": "(从 _MAX_ 条数据中检索)",
+                    "sZeroRecords": "没有检索到数据",
+                    "sSearch": "名称:",
+                    "oPaginate": {
+                        "sFirst": "首页",
+                        "sPrevious": "前一页",
+                        "sNext": "后一页",
+                        "sLast": "尾页"
+                    },"sProcessing":"查找中..."
+                },
+
+                "order": [[0, 'asc']],
+                "initComplete": function () {
+                },
+                "columnDefs": [
+                    {
+                        "render": function (data, type, row) {
+                            var html = '<button id="del'+data+
+                                    '" class="button bg-dot" onclick="del(this)" data-toggle="click" data-target="#deleteDialog" data-mask="1" data-width="50%">删除</button>';
+                            html = html + '<button id="update'+data+
+                                    '" class="button bg-sub" onclick="update(this)" data-toggle="click" data-target="#updateDialog" data-mask="1" data-width="50%" >修改</button>';
+                            return html;
+                        },
+                        "targets": 0
+
+                    }]
+            });
+        });
+
+    </script>
