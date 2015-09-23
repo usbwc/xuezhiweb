@@ -8,7 +8,7 @@ class medical extends CI_Controller {
         $this->load->model('medical_model');
         $this->load->model('remain_prompt_model');
         $this->load->model('take_prompt_model');
-
+        $this->load->model('take_history_model');
     }
 
 
@@ -72,6 +72,22 @@ class medical extends CI_Controller {
         }
         $data = array('status'=>200,'type'=>'remain_prompt_list','remain_prompt_list'=>$rArray,'version'=>$version);
         echo json_encode($data);
+
+    }
+
+    public function getTakeHistory()
+    {
+        $date = $this->input->get('date');
+
+        $uid = $this->input->get('uid');
+        $oriTakeArray = $this->take_history_model->get_by_uid($uid,$date);
+        $takeArrayGroupByDate = array();
+        foreach($oriTakeArray as $oriTake){
+            $date = date('Y-m-d',strtotime($oriTake['taketime']));
+            $takeArrayGroupByDate[$date][] = $oriTake;
+
+        }
+        echo json_encode($takeArrayGroupByDate);
 
     }
 }
