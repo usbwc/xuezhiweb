@@ -92,7 +92,7 @@ class medical extends XZ_Controller {
 
     public function getPrompt()
     {
-        $uid = $this->input->get('uid');
+        $uid = $this->input->post('uid');
         if(!$this->user_model->exist_user($uid)){
             parent::ajaxError('用户不存在');
         }
@@ -116,8 +116,8 @@ class medical extends XZ_Controller {
 
     public function getTakeHistory()
     {
-        $date = $this->input->get('date');
-        $uid = $this->input->get('uid');
+        $date = $this->input->post('date');
+        $uid = $this->input->post('uid');
         $oriTakeArray = $this->take_history_model->get_by_uid($uid,$date);
         $takeArrayGroupByDate = array();
         foreach($oriTakeArray as $oriTake){
