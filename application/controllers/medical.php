@@ -83,7 +83,10 @@ class medical extends XZ_Controller {
     public function getPrompt()
     {
         $uid = $this->input->get('uid');
+        log_message('debug','getPrompt uid = '.$uid);
         $rArray = $this->remain_prompt_model->get_by_uid($uid);
+        log_message('debug','getPrompt $rArray = '.print_r($rArray,true));
+
         foreach($rArray as &$rData){
 
             $rData['rpid'] = $rData['id'];
