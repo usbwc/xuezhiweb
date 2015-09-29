@@ -27,7 +27,7 @@ class medical extends XZ_Controller {
         $newData['remain'] = $this->input->post('remain');
         $newData['unit'] = $this->input->post('unit');
         $newData['warning'] = $this->input->post('warning');
-        $newData['addtime'] = $this->input->post('addtime');
+        $newData['addtime'] = date('Y-m-d H:i:s');
 
         $newID = $this->remain_prompt_model->add($newData);
         $newData['rpid']= $newID;
