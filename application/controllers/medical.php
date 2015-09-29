@@ -116,16 +116,22 @@ class medical extends XZ_Controller {
 
     public function getTakeHistory()
     {
-        $date = $this->input->post('date');
-        $uid = $this->input->post('uid');
+        $date = $this->input->get_post('date');
+        $uid = $this->input->get_post('uid');
         $oriTakeArray = $this->take_history_model->get_by_uid($uid,$date);
         $takeArrayGroupByDate = array();
+
         foreach($oriTakeArray as $oriTake){
             $date = date('Y-m-d',strtotime($oriTake['taketime']));
             $takeArrayGroupByDate[$date][] = $oriTake;
-
         }
-        parent::ajaxReturn('take_history_list',$takeArrayGroupByDate);
+
+        $resultArray = array();
+        foreach($takeArrayGroupByDate as $key=>$data) {
+            $resultArray[] = array('date'=>$key,'take_list'=>$data);
+        }
+
+        parent::ajaxReturn('take_history_list',$resultArray);
     }
     public function getUnitList()
     {
