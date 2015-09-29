@@ -61,7 +61,7 @@ class medical extends XZ_Controller {
     public function addTakeMedicalPrompt()
     {
         $newData['uid'] = $this->input->post('uid');
-        $newData['rpid'] = $this->input->post('id');
+        $newData['rpid'] = $this->input->post('rpid');
         if(!$this->remain_prompt_model->get_by_rpid($newData['rpid']))
         {
             parent::ajaxError('药品不存在');
