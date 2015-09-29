@@ -7,17 +7,6 @@ class User extends CI_Controller {
         parent::__construct();
         $this->load->model('user_model');
     }
-    public  function  index(){
-        $flower = $this->cache->get("test");
-        if(!$flower){
-            $this->cache->set("test","v",'5');
-            echo "no";
-        } else {
-            echo "yes ".$flower;
-        }
-    }
-
-
 
     public function loginAction() {
         log_message('debug','loginAction '.print_r($_POST,true));

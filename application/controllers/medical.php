@@ -1,6 +1,8 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class medical extends CI_Controller {
+require_once 'XZ_Controller.php';
+
+class medical extends XZ_Controller {
 
     public function __construct()
     {
@@ -13,17 +15,13 @@ class medical extends CI_Controller {
     }
 
 
-    public function getStaticMedicalList () {
-        $version = $this->config->item('version');
+    public function getMedicalList () {
         $result = $this->medical_model->get_all();
-        $data = array('status'=>200,'type'=>'medical_list','medical_list'=>$result,'version'=>$version);
-        echo json_encode($data);
+        parent::ajaxReturn('medical_list',$result);
     }
 
     public function addRemainMedicalPrompt()
     {
-        $version = $this->config->item('version');
-
         $newData['uid'] = $this->input->post('uid');
         $newData['mid'] = $this->input->post('mid');
         $newData['remain'] = $this->input->post('remain');
@@ -34,30 +32,24 @@ class medical extends CI_Controller {
         $newID = $this->remain_prompt_model->add($newData);
         $newData['rpid']= $newID;
         $newData['take_prompt_list'] = array();
-        $data = array('status'=>200,'type'=>'remain_prompt_list','remain_prompt_list'=>array($newData),'version'=>$version);
-        echo json_encode($data);    }
+        parent::ajaxReturn('remain_prompt_list',$newData);
+    }
 
     public function addTakeMedicalPrompt()
     {
-        $version = $this->config->item('version');
-
         $newData['uid'] = $this->input->post('uid');
         $newData['rpid'] = $this->input->post('rpid');
-        $newData['time'] = $this->input->post('time');
+        $newData['time'] = date('H:i:s',strtotime($this->input->post('time')));
         $newData['dose'] = $this->input->post('dose');
         $newData['remark'] = $this->input->post('remark');
         $newID = $this->take_prompt_model->add($newData);
         $newData['tpid']= $newID;
-
-        $data = array('status'=>200,'type'=>'take_prompt_list','take_prompt_list'=>array($newData),'version'=>$version);
-        echo json_encode($data);
+        parent::ajaxReturn('take_prompt_list',array($newData));
     }
 
 
     public function getPrompt()
     {
-        $version = $this->config->item('version');
-
         $uid = $this->input->get('uid');
         $rArray = $this->remain_prompt_model->get_by_uid($uid);
         foreach($rArray as &$rData){
@@ -71,17 +63,12 @@ class medical extends CI_Controller {
             }
             $rData['take_prompt_list'] = $take_prompt_list;
         }
-        $data = array('status'=>200,'type'=>'remain_prompt_list','remain_prompt_list'=>$rArray,'version'=>$version);
-        echo json_encode($data);
-
+        parent::ajaxReturn('remain_prompt_list',$rArray);
     }
 
     public function getTakeHistory()
     {
-        $version = $this->config->item('version');
-
         $date = $this->input->get('date');
-
         $uid = $this->input->get('uid');
         $oriTakeArray = $this->take_history_model->get_by_uid($uid,$date);
         $takeArrayGroupByDate = array();
@@ -90,18 +77,48 @@ class medical extends CI_Controller {
             $takeArrayGroupByDate[$date][] = $oriTake;
 
         }
-        $data = array('status'=>200,'type'=>'take_history_list','take_history_list'=>$takeArrayGroupByDate,'version'=>$version);
-
-        echo json_encode($data);
-
+        parent::ajaxReturn('take_history_list',$takeArrayGroupByDate);
     }
-    public function getAllUnit()
+    public function getUnitList()
     {
-        $version = $this->config->item('version');
-
         $arr = $this->unit_model->get_all_unit();
-        $data = array('status'=>200,'type'=>'all_unit_list','all_unit_list'=>$arr,'version'=>$version);
-        echo json_encode($data);
+        parent::ajaxReturn('unit_list',$arr);
+    }
+
+    public function takeTakeMedical()
+    {
+        $newData['uid'] = $this->input->post('uid');
+        $newData['rpid'] = $this->input->post('rpid');
+        $newData['dose'] = $this->input->post('dose');
+        $newData['unit'] = $this->input->post('unit');
+        $newData['taketime'] = date('Y-m-d H:i:s');
+        $remain = $this->remain_prompt_model->get_by_rpid($newData['rpid']);
+        $newData['mid'] = $remain['mid'];
+        $newID = $this->take_history_model->add($newData);
+        if($newID){
+            $newData['id'] = $newID;
+            $takeArrayGroupByDate[date('Y-m-d')] = array($newData);
+            $remainData = $this->remain_prompt_model->get_by_rpid($newData['rpid']);
+            $remain = $remainData['remain'];
+            $remainData['remain'] = (float)$remain -  (float)$newData['dose'];
+            $this->remain_prompt_model->update($remainData);
+
+            parent::ajaxReturn('take_history_list',$takeArrayGroupByDate);
+        } else {
+            parent::ajaxError('添加吃药记录失败');
+        }
+    }
+
+    public function addMedicalDose()
+    {
+        $uid = $this->input->post('uid');
+        $newData['id'] = $this->input->post('rpid');
+        $addDose = $this->input->post('dose');
+        $remainData = $this->remain_prompt_model->get_by_rpid($newData['id']);
+        $remain = $remainData['remain'];
+        $newData['remain'] = (float)$remain +  (float)$addDose;
+        $this->remain_prompt_model->update($newData);
+        parent::ajaxReturn('add_medical_dose_result', $newData['remain']);
     }
 }
 

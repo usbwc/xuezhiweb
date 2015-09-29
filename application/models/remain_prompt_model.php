@@ -20,6 +20,12 @@ class remain_prompt_model extends CI_Model
         return $this->db->insert_id();
     }
 
+    public function update($data){
+
+        $this->db->where('id',$data['id']);
+        $this->db->update('remain_prompt',$data);
+    }
+
     public function get_by_rpid($id){
         $this->db->where('id',$id);
         $query = $this->db->get('remain_prompt');
