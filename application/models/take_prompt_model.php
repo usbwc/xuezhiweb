@@ -31,4 +31,9 @@ class take_prompt_model extends CI_Model
         $query = $this->db->get('take_prompt');
         return $query->result_array();
     }
+
+    public function update($data){
+        $this->db->where('id',$data['id']);
+        $this->db->update('take_prompt',$data);
+    }
 }

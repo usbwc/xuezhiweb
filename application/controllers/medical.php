@@ -34,11 +34,29 @@ class medical extends XZ_Controller {
         $newData['take_prompt_list'] = array();
         parent::ajaxReturn('remain_prompt_list',$newData);
     }
+    public function updateRemainMedicalPromptValid()
+    {
+        $uid = $this->input->post('uid');
+        $newData['id'] = $this->input->post('id');
+        $remainPrompt = $this->remain_prompt_model->get_by_rpid($newData['id']);
+        if(!$remainPrompt){
+            parent::ajaxError('要修改的记录不存在');
+        }
+
+
+        $newData['valid'] = $this->input->post('valid');
+        if(!in_array($newData['valid'],array('1','0'))){
+            parent::ajaxError('valid值不正确');
+        }
+        $this->remain_prompt_model->update($newData);
+        parent::ajaxReturn('update_remain_prompt_valid_result',$newData['valid']);
+    }
+
 
     public function addTakeMedicalPrompt()
     {
         $newData['uid'] = $this->input->post('uid');
-        $newData['rpid'] = $this->input->post('rpid');
+        $newData['rpid'] = $this->input->post('id');
         $newData['time'] = date('H:i:s',strtotime($this->input->post('time')));
         $newData['dose'] = $this->input->post('dose');
         $newData['remark'] = $this->input->post('remark');
@@ -46,7 +64,21 @@ class medical extends XZ_Controller {
         $newData['tpid']= $newID;
         parent::ajaxReturn('take_prompt_list',array($newData));
     }
-
+    public function updateTakeMedicalPromptValid()
+    {
+        $uid = $this->input->post('uid');
+        $newData['id'] = $this->input->post('id');
+        $takePrompt = $this->take_prompt_model->get_by_tpid($newData['id']);
+        if(!$takePrompt){
+            parent::ajaxError('要修改的记录不存在');
+        }
+        $newData['valid'] = $this->input->post('valid');
+        if(!in_array($newData['valid'],array('1','0'))){
+            parent::ajaxError('valid值不正确');
+        }
+        $this->take_prompt_model->update($newData);
+        parent::ajaxReturn('update_take_prompt_valid_result',$newData['valid']);
+    }
 
     public function getPrompt()
     {
