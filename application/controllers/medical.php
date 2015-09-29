@@ -22,8 +22,13 @@ class medical extends XZ_Controller {
 
     public function addRemainMedicalPrompt()
     {
+        log_message('debug','addRemainMedicalPrompt '.print_r($_POST,true));
         $newData['uid'] = $this->input->post('uid');
         $newData['mid'] = $this->input->post('mid');
+        if(!$this->medical_model->exist_id($newData['mid']))
+        {
+            parent::ajaxError('药品不存在');
+        }
         $newData['remain'] = $this->input->post('remain');
         $newData['unit'] = $this->input->post('unit');
         $newData['warning'] = $this->input->post('warning');
@@ -57,6 +62,11 @@ class medical extends XZ_Controller {
     {
         $newData['uid'] = $this->input->post('uid');
         $newData['rpid'] = $this->input->post('id');
+        if(!$this->remain_prompt_model->get_by_rpid($newData['rpid']))
+        {
+            parent::ajaxError('药品不存在');
+        }
+
         $newData['time'] = date('H:i:s',strtotime($this->input->post('time')));
         $newData['dose'] = $this->input->post('dose');
         $newData['remark'] = $this->input->post('remark');
@@ -83,6 +93,9 @@ class medical extends XZ_Controller {
     public function getPrompt()
     {
         $uid = $this->input->get('uid');
+        if(!$this->user_model->exist_user($uid)){
+            parent::ajaxError('用户不存在');
+        }
         log_message('debug','getPrompt uid = '.$uid);
         $rArray = $this->remain_prompt_model->get_by_uid($uid);
         log_message('debug','getPrompt $rArray = '.print_r($rArray,true));
