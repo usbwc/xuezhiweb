@@ -12,6 +12,7 @@ class medical extends XZ_Controller {
         $this->load->model('take_prompt_model');
         $this->load->model('take_history_model');
         $this->load->model('unit_model');
+        $this->load->model('detection_model');
     }
 
 
@@ -173,6 +174,35 @@ class medical extends XZ_Controller {
         $newData['remain'] = (float)$remain +  (float)$addDose;
         $this->remain_prompt_model->update($newData);
         parent::ajaxReturn('add_medical_dose_result', $newData['remain']);
+    }
+    public function addDetection()
+    {
+        $data['uid'] = $this->input->post('uid');
+        $data['TG'] = $this->input->post('TG');
+        $data['TCHO'] = $this->input->post('TCHO');
+        $data['LOLC'] = $this->input->post('LOLC');
+        $data['HDLC'] = $this->input->post('HDLC');
+        $data['ALT'] = $this->input->post('ALT');
+        $data['AST'] = $this->input->post('AST');
+        $data['CK'] = $this->input->post('CK');
+        $data['GLU'] = $this->input->post('GLU');
+        $data['HBA1C'] = $this->input->post('HBA1C');
+        $data['time'] = date('Y-m-d H:i:s');
+        $newID = $this->detection_model->add($data);
+        if($newID){
+            $data['id'] = $newID;
+            parent::ajaxReturn('detection_list', array($data));
+        } else {
+            parent::ajaxError('添加失败');
+        }
+    }
+
+    public function getDetection()
+    {
+        $uid = $this->input->get_post('uid');
+        $arr = $this->detection_model->get_all($uid);
+        parent::ajaxReturn('detection_list', array($arr));
+
     }
 }
 
