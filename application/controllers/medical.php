@@ -201,7 +201,7 @@ class medical extends XZ_Controller {
     {
         $uid = $this->input->get_post('uid');
         $arr = $this->detection_model->get_all($uid);
-        parent::ajaxReturn('detection_list', array($arr));
+        parent::ajaxReturn('detection_list', $arr);
 
     }
 }
