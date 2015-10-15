@@ -26,7 +26,7 @@ class medical_model extends CI_Model
 
     public function get_all()
     {
-        $this->db->select('id as mid,name');
+        $this->db->select('id as mid,name,unit');
         $query = $this->db->get('medical');
         return $query->result_array();
     }

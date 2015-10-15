@@ -186,6 +186,7 @@ class medical extends XZ_Controller {
         $data['AST'] = $this->input->post('AST');
         $data['CK'] = $this->input->post('CK');
         $data['GLU'] = $this->input->post('GLU');
+        $data['SCR'] = $this->input->post('SCR');
         $data['HBA1C'] = $this->input->post('HBA1C');
         $data['time'] = date('Y-m-d H:i:s');
         $newID = $this->detection_model->add($data);
