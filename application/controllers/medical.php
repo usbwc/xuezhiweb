@@ -21,6 +21,16 @@ class medical extends XZ_Controller {
         parent::ajaxReturn('medical_list',$result);
     }
 
+    public function removeRemainMedicalPrompt(){
+        $newData['uid'] = $this->input->post('uid');
+        $newData['id'] = $this->input->post('id');
+        $remainPrompt = $this->remain_prompt_model->get_by_rpid($newData['id']);
+        if(!$remainPrompt){
+            parent::ajaxError('要修改的记录不存在');
+        }
+        $this->remain_prompt_model->del($newData['id']);
+    }
+
     public function addRemainMedicalPrompt()
     {
         log_message('debug','addRemainMedicalPrompt '.print_r($_POST,true));
@@ -115,6 +125,9 @@ class medical extends XZ_Controller {
         parent::ajaxReturn('remain_prompt_list',$rArray);
     }
 
+
+
+
     public function getTakeHistory()
     {
         $date = $this->input->get_post('date');
@@ -173,8 +186,20 @@ class medical extends XZ_Controller {
         $remain = $remainData['remain'];
         $newData['remain'] = (float)$remain +  (float)$addDose;
         $this->remain_prompt_model->update($newData);
-        parent::ajaxReturn('add_medical_dose_result', $newData['remain']);
+        parent::ajaxReturn('medical_dose_result', $newData['remain']);
     }
+    public function setMedicalDose()
+    {
+        $uid = $this->input->post('uid');
+        $newData['id'] = $this->input->post('rpid');
+        $dose = $this->input->post('dose');
+        $newData['remain'] = $dose;
+        $this->remain_prompt_model->update($newData);
+        parent::ajaxReturn('medical_dose_result', $newData['remain']);
+    }
+
+
+
     public function addDetection()
     {
         $data['uid'] = $this->input->post('uid');

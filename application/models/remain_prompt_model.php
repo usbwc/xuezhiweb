@@ -37,4 +37,8 @@ class remain_prompt_model extends CI_Model
         $query = $this->db->get('remain_prompt');
         return $query->result_array();
     }
+    public function del($id){
+        $this->db->where('id',$id);
+        $this->db->delete('remain_prompt');
+    }
 }
