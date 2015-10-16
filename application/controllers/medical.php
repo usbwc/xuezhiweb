@@ -23,7 +23,7 @@ class medical extends XZ_Controller {
 
     public function removeRemainMedicalPrompt(){
         $newData['uid'] = $this->input->post('uid');
-        $newData['id'] = $this->input->post('id');
+        $newData['id'] = $this->input->post('rpid');
         $remainPrompt = $this->remain_prompt_model->get_by_rpid($newData['id']);
         if(!$remainPrompt){
             parent::ajaxError('要修改的记录不存在');
