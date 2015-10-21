@@ -55,4 +55,37 @@ class XZ_Controller extends CI_Controller
 		}
 	}
 
+	public function verifyValidCode($code){
+		if($code === '' || $code == null){
+			$this->ajaxError('valid值不正确');
+		}
+		if(!in_array($code,array('1','0'))){
+			$this->ajaxError('valid值不正确');
+		}
+	}
+
+	public function checkDatetime($str, $format="Y-m-d H:i:s"){
+		$unixTime=strtotime($str);
+		$checkDate= date($format, $unixTime);
+		if($checkDate==$str){
+
+		}
+		else{
+			$this->ajaxError('时间不合法');
+		}
+	}
+
+	public function verifyDose($doseString){
+		if($doseString != null){
+			if(!is_numeric($doseString)){
+				$this->ajaxError('数量不合法');
+			}
+			$intValue = (int)$doseString;
+			if($intValue<=0){
+				$this->ajaxError('数量不合法');
+			}
+		} else {
+			$this->ajaxError('数量不合法');
+		}
+	}
 }

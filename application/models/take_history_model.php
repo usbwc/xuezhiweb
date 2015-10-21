@@ -28,5 +28,9 @@ class take_history_model extends CI_Model
         return $query->result_array();
     }
 
+    public function del($id){
+        $this->db->delete('take_history', array('id' => $id));
+
+    }
 
 }

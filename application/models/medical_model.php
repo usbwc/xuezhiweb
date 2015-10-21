@@ -24,9 +24,17 @@ class medical_model extends CI_Model
         return false;
     }
 
+    public function get_by_id($id){
+        $this->db->select('id as mid,name,unit,dose,precaution');
+        $this->db->where('id',$id);
+        $query = $this->db->get('medical');
+        return $query->row_array();
+    }
+
+
     public function get_all()
     {
-        $this->db->select('id as mid,name,unit');
+        $this->db->select('id as mid,name,unit,dose,precaution');
         $query = $this->db->get('medical');
         return $query->result_array();
     }
