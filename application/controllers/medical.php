@@ -274,7 +274,13 @@ class medical extends XZ_Controller {
         }
     }
 
+    public function getDetection()
+    {
+        $uid = $this->input->get_post('uid');
+        $arr = $this->detection_model->get_all($uid);
+        parent::ajaxReturn('detection_list', $arr);
 
+    }
     public function addDetection()
     {
         $data['uid'] = $this->input->post('uid');
@@ -297,14 +303,29 @@ class medical extends XZ_Controller {
             parent::ajaxError('添加失败');
         }
     }
-
-    public function getDetection()
+    public function setDetection()
     {
-        $uid = $this->input->get_post('uid');
-        $arr = $this->detection_model->get_all($uid);
-        parent::ajaxReturn('detection_list', $arr);
-
+        $data['id'] = $this->input->post('id');
+        $exist = $this->detection_model->get_by_id($data['id']);
+        if(!$exist){
+            parent::ajaxError('不存在');
+        }
+        $data['uid'] = $this->input->post('uid');
+        $data['TG'] = $this->input->post('TG');
+        $data['TCHO'] = $this->input->post('TCHO');
+        $data['LOLC'] = $this->input->post('LOLC');
+        $data['HDLC'] = $this->input->post('HDLC');
+        $data['ALT'] = $this->input->post('ALT');
+        $data['AST'] = $this->input->post('AST');
+        $data['CK'] = $this->input->post('CK');
+        $data['GLU'] = $this->input->post('GLU');
+        $data['SCR'] = $this->input->post('SCR');
+        $data['HBA1C'] = $this->input->post('HBA1C');
+        $this->detection_model->update($data);
+        parent::ajaxReturn('detection_list', array($this->detection_model->get_by_id($data['id'])));
     }
+
+
 }
 
 /* End of file welcome.php */
