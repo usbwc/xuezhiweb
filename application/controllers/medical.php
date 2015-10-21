@@ -138,9 +138,6 @@ class medical extends XZ_Controller {
             parent::ajaxError('药品不存在');
         }
 
-        if($this->box_model->get_by_uid_mid($newData['uid'],$newData['mid'])){
-            parent::ajaxError('当前药品已经存在');
-        }
         $warningString = $this->input->post('warning');
         parent::verifyDose($warningString);
         $newData['warning'] = $warningString;
@@ -148,6 +145,17 @@ class medical extends XZ_Controller {
         $remainString = $this->input->post('remain');
         parent::verifyDose($remainString);
         $newData['remain'] = $remainString;
+
+        $existBox = $this->box_model->get_by_uid_mid($newData['uid'],$newData['mid']);
+        if($existBox){
+            $newBoxData['id'] = $existBox['id'];
+            $boxRemain = $existBox['remain'];
+            $newBoxData['remain'] = (float)$boxRemain +  (float)$newData['remain'];
+            $this->box_model->update($newBoxData);
+            $existBox['remain'] = $newBoxData['remain'];
+            parent::ajaxReturn('box_list',array($existBox),'药箱存在,更新remain成功');
+        }
+
 
         $newData['addtime'] = date('Y-m-d H:i:s');
 
