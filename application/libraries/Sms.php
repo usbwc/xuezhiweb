@@ -13,7 +13,7 @@ class Sms {
 
 // 发送验证码
     public  function getSMS($mobile,$code){
-        $response = $this->postRequest( 'https://api.sms.mob.com/sms/verify', array(
+        $response = $this->postRequest( 'https://web.sms.mob.com/sms/verify', array(
             'appkey' => 'ad4423202d28',
             'phone' => $mobile,
             'zone' => '86',
