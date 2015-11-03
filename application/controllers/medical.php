@@ -247,7 +247,7 @@ class medical extends XZ_Controller {
     {
         $newData['uid'] = $this->input->post('uid');
         $newData['mid'] = $this->input->post('mid');
-        $newData['pid'] = $this->input->post('mid');
+        $newData['pid'] = $this->input->post('pid');
         if(!$this->medical_model->exist_id($newData['mid']))
         {
             parent::ajaxError('药品不存在');
