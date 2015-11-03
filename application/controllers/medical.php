@@ -77,10 +77,13 @@ class medical extends XZ_Controller {
         }
         $uid = $this->input->post('uid');
         $mid = $this->input->post('mid');
+
+
         if(!$this->medical_model->exist_id($mid))
         {
             parent::ajaxError('药品不存在');
         }
+        $newData['mid'] = $mid;
 
         if(isset($_POST['dose'])){
             $doseString = $this->input->post('dose');
