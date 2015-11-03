@@ -22,9 +22,14 @@ class XZ_Controller extends CI_Controller
 		$this->output->set_content_type('application/json', 'utf-8')->set_output(json_encode($response, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES))->_display();
 		exit();
 	}
-	public function ajaxError($msg='',$status=-1)
+	public function ajaxError($msg='',$status=-1,$arr = null)
 	{
 		$response = array('status'=>$status,'msg'=>$msg);
+		if($arr){
+			foreach($arr as $k=>$v){
+				$response[$k] = $v;
+			}
+		}
 		$this->output->set_content_type('application/json', 'utf-8')->set_output(json_encode($response, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES))->_display();
 		exit();
 	}

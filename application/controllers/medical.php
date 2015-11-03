@@ -269,7 +269,7 @@ class medical extends XZ_Controller {
                     $this->box_model->update($newBoxData);
                 } else {
                     $this->take_history_model->del($newID);
-                    parent::ajaxError('药品数量不足',-2);
+                    parent::ajaxError('药品数量不足',-2,array('mid'=>$newData['mid']));
                 }
             }
             parent::ajaxReturn('take_history_list',$takeArrayGroupByDate);
