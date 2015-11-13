@@ -239,7 +239,9 @@ class medical extends XZ_Controller {
         foreach($takeArrayGroupByDate as $key=>$data) {
             $resultArray[] = array('date'=>$key,'take_list'=>$data);
         }
-
+        if(count($resultArray) == 0){
+            $resultArray[] = array('date'=>$date,'take_list'=>array());
+        }
         parent::ajaxReturn('take_history_list',$resultArray);
     }
 
