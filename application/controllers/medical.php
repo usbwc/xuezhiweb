@@ -45,28 +45,47 @@ class medical extends XZ_Controller {
         {
             parent::ajaxError('药品不存在');
         }
+        $unit = $this->input->post('unit_id');
+        if(!$this->unit_model->get_unit($unit)){
+            parent::ajaxError('单位不存在');
+        }
+        $newData['unit_id'] = $unit;
 
-
-        $doseString = $this->input->post('dose');
-        parent::verifyDose($doseString);
-        $newData['dose'] = $doseString;
+        $numberPerDay = $this->input->post('num_per_day');
+        parent::verifyDose($numberPerDay,'numberPerDay不合法');
+        if($numberPerDay>10){
+            parent::ajaxError('numberPerDay太大');
+        }
+        $numberPerDay = intval($numberPerDay);
 
         $newData['precaution'] = $this->input->post('precaution');
-
-        $timeString = $this->input->post('time');
-        parent::checkDatetime($timeString,'H:i:s');
-        $newData['time'] = date('H:i:s',strtotime($timeString));
-
         $newData['valid'] = $this->input->post('valid');
         parent::verifyValidCode($newData['valid']);
 
         $newData['addtime'] = date('Y-m-d H:i:s');
-        $newID = $this->prompt_model->add($newData);
-        if(!$newID){
-            parent::ajaxError('添加失败');
+
+        $promptArray = array();
+        for($i=1;$i<=$numberPerDay;$i++)
+        {
+            $timeString = $this->input->post('time_'.$i);
+            parent::checkDatetime($timeString,'H:i:s');
+            $doseString = $this->input->post('dose_'.$i);
+            parent::verifyDose($doseString);
+
+            $newData['dose'] = $doseString;
+            $newData['time'] = date('H:i:s',strtotime($timeString));
+            $promptArray[] = $newData;
         }
-        $newData['id'] =  $newID;
-        parent::ajaxReturn('prompt_list',array($newData),'添加提醒成功');
+
+        foreach($promptArray as &$prompt){
+            $newID = $this->prompt_model->add($prompt);
+            if(!$newID){
+                parent::ajaxError('添加失败');
+            }
+            $prompt['id'] = $newID;
+        }
+
+        parent::ajaxReturn('prompt_list',$promptArray,'添加提醒成功');
     }
     public function setPrompt()
     {

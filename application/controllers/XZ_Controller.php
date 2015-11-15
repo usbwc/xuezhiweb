@@ -80,17 +80,17 @@ class XZ_Controller extends CI_Controller
 		}
 	}
 
-	public function verifyDose($doseString){
+	public function verifyDose($doseString ,$msg='数量不合法'){
 		if($doseString != null){
 			if(!is_numeric($doseString)){
-				$this->ajaxError('数量不合法');
+				$this->ajaxError($msg);
 			}
 			$intValue = (int)$doseString;
 			if($intValue<=0){
-				$this->ajaxError('数量不合法');
+				$this->ajaxError($msg);
 			}
 		} else {
-			$this->ajaxError('数量不合法');
+			$this->ajaxError($msg);
 		}
 	}
 }

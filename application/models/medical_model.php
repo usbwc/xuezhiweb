@@ -25,7 +25,7 @@ class medical_model extends CI_Model
     }
 
     public function get_by_id($id){
-        $this->db->select('id as mid,name,unit,dose,precaution');
+        $this->db->select('id as mid,name,unit,dose,precaution,cid');
         $this->db->where('id',$id);
         $query = $this->db->get('medical');
         return $query->row_array();
@@ -34,7 +34,7 @@ class medical_model extends CI_Model
 
     public function get_all()
     {
-        $this->db->select('id as mid,name,unit,dose,precaution');
+        $this->db->select('id as mid,name,unit,dose,precaution,cid');
         $query = $this->db->get('medical');
         return $query->result_array();
     }
