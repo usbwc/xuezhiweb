@@ -13,6 +13,7 @@ class medical extends XZ_Controller {
         $this->load->model('take_history_model');
         $this->load->model('unit_model');
         $this->load->model('detection_model');
+        $this->load->model('no_take_history_model');
     }
 
     //药品列表
@@ -246,7 +247,7 @@ class medical extends XZ_Controller {
         $date = $this->input->post('date');
         parent::checkDatetime($date,'Y-m-d');
         $uid = $this->input->post('uid');
-        $oriTakeArray = $this->take_history_model->get_by_uid($uid,$date);
+        $oriTakeArray = $this->take_history_model->get_by_uid_month($uid,$date);
         $takeArrayGroupByDate = array();
 
         foreach($oriTakeArray as $oriTake){
@@ -280,7 +281,7 @@ class medical extends XZ_Controller {
         parent::verifyDose($newData['dose']);
         $newData['taketime'] = date('Y-m-d H:i:s');
 
-        $existPromptRecord = $this->take_history_model->get_by_pid($newData['pid']);
+        $existPromptRecord = $this->take_history_model->get_by_pid_today($newData['pid']);
         if($existPromptRecord){
             parent::ajaxError('今天已经添加过吃药本记录了');
         }
@@ -357,6 +358,46 @@ class medical extends XZ_Controller {
         parent::ajaxReturn('detection_list', array($this->detection_model->get_by_id($data['id'])));
     }
 
+    public function getNoTakeList()
+    {
+        $uid = $this->input->post('uid');
+        $date = $this->input->post('date');
+        parent::checkDatetime($date,'Y-m-d');
+        $resultArray = $this->no_take_history_model->get_by_uid_month($uid,$date);
+        parent::ajaxReturn('no_take_history_list',array('date'=>$date,'no_take_list'=>$resultArray));
+    }
+
+    public function refresh()
+    {
+        $date = $this->input->get('date');
+        if(!$date){
+            $date = date('Y-m-d',time()-3600*24);
+        }
+        log_message('debug','$refresh = '.$date);
+
+        $promptArray = $this->prompt_model->get_all_valid();
+        $noTakePromptArray = array();
+        foreach ($promptArray as $prompt){
+            $uid = $prompt['uid'];
+            $pid = $prompt['id'];
+            $result = $this->take_history_model->get_by_uid_pid($uid,$pid,$date);
+            if(!$result){
+                $noTakePromptArray[] = array('id'=>$pid,'uid'=>$uid,'time'=>$prompt['time']);
+            }
+        }
+        log_message('debug','$noTakePromptArray = '.print_r($noTakePromptArray,true));
+         foreach($noTakePromptArray as $prompt){
+            $newData['pid']=$prompt['id'];
+            $newData['uid']=$prompt['uid'];
+            $newData['no_take_date'] = $date.' '.$prompt['time'];
+            $exist = $this->no_take_history_model->get_by_uid_pid($newData['uid'],$newData['pid'], $date);
+             if(!$exist){
+                 log_message('debug','no_take_history_model add = '.print_r($newData,true));
+                 $this->no_take_history_model->add($newData);
+            };
+        }
+        //parent::ajaxReturn('no_',$noTakePromptArray);
+    }
 
 }
 

@@ -20,7 +20,7 @@ class take_history_model extends CI_Model
         return $this->db->insert_id();
     }
 
-    public function get_by_uid($uid,$date){
+    public function get_by_uid_month($uid,$date){
         $this->db->where('uid',$uid);
         $this->db->where('DATE_FORMAT(taketime,\'%Y-%m\')',date('Y-m',strtotime($date)));
         $this->db->order_by('taketime','asc');
@@ -28,9 +28,19 @@ class take_history_model extends CI_Model
         return $query->result_array();
     }
 
-    public function get_by_pid($pid){
+
+    public function get_by_pid_today($pid){
         $this->db->where('pid',$pid);
         $this->db->where('DATE_FORMAT(taketime,\'%Y-%m-%d\')',date('Y-m-d',time()));
+        $query = $this->db->get('take_history');
+        return $query->row_array();
+    }
+
+
+    public function get_by_uid_pid($uid,$pid,$date){
+        $this->db->where('pid',$pid);
+        $this->db->where('uid',$uid);
+        $this->db->where('DATE_FORMAT(taketime,\'%Y-%m-%d\')',date('Y-m-d',strtotime($date)));
         $query = $this->db->get('take_history');
         return $query->row_array();
     }

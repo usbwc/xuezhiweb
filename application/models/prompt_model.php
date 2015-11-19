@@ -41,4 +41,9 @@ class prompt_model extends CI_Model
         $this->db->where('id',$id);
         $this->db->delete('prompt');
     }
+    public function get_all_valid(){
+        $this->db->where('valid',1);
+        $query = $this->db->get('prompt');
+        return $query->result_array();
+    }
 }
