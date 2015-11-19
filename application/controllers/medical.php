@@ -363,8 +363,23 @@ class medical extends XZ_Controller {
         $uid = $this->input->post('uid');
         $date = $this->input->post('date');
         parent::checkDatetime($date,'Y-m-d');
-        $resultArray = $this->no_take_history_model->get_by_uid_month($uid,$date);
-        parent::ajaxReturn('no_take_history_list',array('date'=>$date,'no_take_list'=>$resultArray));
+        $arr = $this->no_take_history_model->get_by_uid_month($uid,$date);
+        $noTakeArrayGroupByDate = array();
+
+        foreach($arr as $oriNoTake){
+            $date = date('Y-m-d',strtotime($oriNoTake['no_take_date']));
+            $noTakeArrayGroupByDate[$date][] = $oriNoTake;
+        }
+
+        $resultArray = array();
+        foreach($noTakeArrayGroupByDate as $key=>$data) {
+            $resultArray[] = array('date'=>$key,'no_take_list'=>$data);
+        }
+        if(count($resultArray) == 0){
+            $resultArray[] = array('date'=>$date,'no_take_list'=>array());
+        }
+
+        parent::ajaxReturn('no_take_history_list',$resultArray);
     }
 
     public function refresh()
