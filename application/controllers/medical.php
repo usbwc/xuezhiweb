@@ -358,7 +358,7 @@ class medical extends XZ_Controller {
         parent::ajaxReturn('detection_list', array($this->detection_model->get_by_id($data['id'])));
     }
 
-    public function getNoTakeList()
+    public function getNoTakeHistory()
     {
         $uid = $this->input->post('uid');
         $date = $this->input->post('date');
