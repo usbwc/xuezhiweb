@@ -366,8 +366,9 @@ class medical extends XZ_Controller {
         $arr = $this->no_take_history_model->get_by_uid_month($uid,$date);
         $noTakeArrayGroupByDate = array();
 
-        foreach($arr as $oriNoTake){
+        foreach($arr as &$oriNoTake){
             $date = date('Y-m-d',strtotime($oriNoTake['no_take_date']));
+            unset($oriNoTake['uid']);
             $noTakeArrayGroupByDate[$date][] = $oriNoTake;
         }
 
@@ -397,13 +398,14 @@ class medical extends XZ_Controller {
             $pid = $prompt['id'];
             $result = $this->take_history_model->get_by_uid_pid($uid,$pid,$date);
             if(!$result){
-                $noTakePromptArray[] = array('id'=>$pid,'uid'=>$uid,'time'=>$prompt['time']);
+                $noTakePromptArray[] = array('id'=>$pid,'uid'=>$uid,'mid'=>$prompt['mid'],'time'=>$prompt['time']);
             }
         }
         log_message('debug','$noTakePromptArray = '.print_r($noTakePromptArray,true));
          foreach($noTakePromptArray as $prompt){
             $newData['pid']=$prompt['id'];
             $newData['uid']=$prompt['uid'];
+            $newData['mid']=$prompt['mid'];
             $newData['no_take_date'] = $date.' '.$prompt['time'];
             $exist = $this->no_take_history_model->get_by_uid_pid($newData['uid'],$newData['pid'], $date);
              if(!$exist){
