@@ -28,6 +28,13 @@ class take_history_model extends CI_Model
         return $query->result_array();
     }
 
+    public function get_by_pid($pid){
+        $this->db->where('pid',$pid);
+        $this->db->where('DATE_FORMAT(taketime,\'%Y-%m-%d\')',date('Y-m-d',time()));
+        $query = $this->db->get('take_history');
+        return $query->row_array();
+    }
+
     public function del($id){
         $this->db->delete('take_history', array('id' => $id));
 

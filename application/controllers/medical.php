@@ -269,6 +269,9 @@ class medical extends XZ_Controller {
         $newData['uid'] = $this->input->post('uid');
         $newData['mid'] = $this->input->post('mid');
         $newData['pid'] = $this->input->post('pid');
+        if(!$this->prompt_model->get_by_id($newData['pid'])){
+            parent::ajaxError('提醒不存在');
+        }
         if(!$this->medical_model->exist_id($newData['mid']))
         {
             parent::ajaxError('药品不存在');
@@ -277,6 +280,10 @@ class medical extends XZ_Controller {
         parent::verifyDose($newData['dose']);
         $newData['taketime'] = date('Y-m-d H:i:s');
 
+        $existPromptRecord = $this->take_history_model->get_by_pid($newData['pid']);
+        if($existPromptRecord){
+            parent::ajaxError('今天已经添加过吃药本记录了');
+        }
         $newID = $this->take_history_model->add($newData);
         if($newID){
             $newData['id'] = $newID;
